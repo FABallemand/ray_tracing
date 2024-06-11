@@ -31,7 +31,7 @@ def ps(v1, v2):
     return np.vdot(v1, v2)
 
 def norme(u):
-    #return np.sqrt(np.sum(u**2))
+    # return np.sqrt(np.sum(u**2))
     return np.linalg.norm(u)
 
 
@@ -41,7 +41,7 @@ def unitaire(v):
 
 def pt(r, t):
     # prend en argument un rayon r et un réel t et calcule les cordonnées du point situé à la distance t du point S dans le direction de u
-    #assert (t>=0) # trop précis ?
+    # assert (t>=0) # trop précis ?
     epsilon = 10**-12
     assert t >= -epsilon
     (S, u) = r

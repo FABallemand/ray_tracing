@@ -1,6 +1,6 @@
-# Ray Tracing
+# 🎇 Ray Tracing
 
-## Description
+## 💬 Description
 
 In 3D computer graphics, ray tracing is a technique for modeling light transport for use in a wide variety of rendering algorithms for generating digital images. [Wikipedia](https://en.wikipedia.org/wiki/Ray_tracing_(graphics))
 
