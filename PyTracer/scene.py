@@ -11,6 +11,16 @@ from sphere import Sphere
 class Scene():
 
     def __init__(self, view_size=(16, 9), screen_size=(1600, 900)):
+        """
+        Scene
+
+        Parameters
+        ----------
+        view_size : tuple, optional
+            Size of the view (ie: size of the virtual landscape), by default (16, 9)
+        screen_size : tuple, optional
+            Siz of the screen (ie: screen resolution), by default (1600, 900)
+        """
         self.view_size: tuple[int, int] = view_size
         self.screen_size: tuple[int, int] = screen_size
         self.image: np.ndarray = np.empty((*screen_size, 3))
@@ -26,7 +36,7 @@ class Scene():
         x = (j - self._center[0] + 0.5) * self._delta_x
         y = -(i - self._center[1] + 0.5) * self._delta_y
         return Point(np.array([x, y, 0]))
-    
+
     def ray_from_pixel(self, point: Point, i: int, j: int) -> Ray:
         screen_point = self.pixel_to_point(i, j)
         return Ray.from_points(point, screen_point, BLACK)
@@ -37,29 +47,28 @@ class Scene():
             return False
         
         # Check if ray not hidden by other sphere
-        distance_ray_sphere = Point.distance(sphere.center, ray.source)
+        distance_ray_sphere = Point.distance(sphere.center, ray.src)
         for s in self.spheres:
-            if s != sphere and Point.distance(s.center, ray.source) > distance_ray_sphere:
+            if s != sphere and Point.distance(s.center, ray.src) < distance_ray_sphere:
                 if s.ray_intersection(ray) is not None:
                     return False
         return True
     
-    def interception(self, ray: Ray) -> Union[tuple[Point, int], None]:
+    def interception(self, ray: Ray) -> Union[tuple[Point, Sphere], None]:
         intersection_point = None
         intersection_distance = None
-        sphere_idx = -1
-        for i, sphere in enumerate(self.spheres):
+        intersection_sphere = None
+        for sphere in self.spheres:
             new_intersection_point = sphere.ray_intersection(ray)
             if new_intersection_point is not None:
-                new_intersection_distance = Point.distance(new_intersection_point, ray.source)
+                new_intersection_distance = Point.distance(new_intersection_point, ray.src)
                 if intersection_point is None or new_intersection_distance < intersection_distance:
                     intersection_point = new_intersection_point
                     intersection_distance = new_intersection_distance
-                    sphere_idx = i
-        return intersection_point, sphere_idx
+                    intersection_sphere = sphere
+        return intersection_point, intersection_sphere
 
-    def diffused_color(self, point: Point, sphere_idx: int) -> Color:
-        sphere = self.spheres[sphere_idx]
+    def diffused_color(self, point: Point, sphere: Sphere) -> Color:
         colors = []
         for light in self.lights:
             ray = Ray.from_points(light.position, point, light.color)
@@ -71,22 +80,23 @@ class Scene():
             color.val += c.val
         return color
     
-    def ray_trace(self, omega: Point, bg_color: Color):
+    def ray_trace(self, omega: Point, bg_color: Color, lights: bool = False):
         # Iterate over all pixels
         for j in range(self.screen_size[0]):                
             for i in range(self.screen_size[1]):
                 ray = self.ray_from_pixel(omega, i, j)
 
-                intersection_point, sphere_idx = self.interception(ray)
+                intersection_point, sphere = self.interception(ray)
                 if intersection_point is not None:
-                    pixel_color = self.diffused_color(intersection_point, sphere_idx)
+                    pixel_color = self.diffused_color(intersection_point, sphere)
                     self.image[i, j] = pixel_color.val
                 else:
                     self.image[i, j] = bg_color.val
 
     def plot(self, path=None):
-        plt.figure("PyTracer", figsize=(16,9))
+        plt.figure("PyTracer", figsize=self.view_size)
         plt.imshow(self.image)
+        
         if path is not None:
             plt.savefig(path)
         else:

@@ -8,56 +8,72 @@ from vector import Vector
 
 class Sphere():
 
-    def __init__(self, center: Point, radius: float, color: Color):
+    def __init__(self, center: Point, rad: float, color: Color):
+        """
+        Sphere
+
+        Parameters
+        ----------
+        center : Point
+            Center point
+        rad : float
+            Radius
+        color : Color
+            Color
+        """
         self.center: Point = center
-        self.radius: float = radius
+        self.rad: float = rad
         self.color: Color = color
+
+    def __str__(self) -> str:
+        return f"Sphere(center={self.center}, rad={self.rad}, color={self.color})"
 
     def normal_at_point(self, point: Point) -> Vector:
         return Vector.from_points(self.center, point, True)
 
     def is_point_inside(self, point: Point) -> bool:
-        return Point.distance(self.center, point) <= self.radius
+        return Point.distance(self.center, point) <= self.rad
     
     def is_ray_above_surface(self, ray: Ray, point: Point) -> bool:
-        normal = Vector.from_points(self.center, point, normalise=True) # Vector normal to plane tangent to sphere in point
-        point_to_ray = Vector.from_points(point, ray.source) # Vector from point to ray source
-        return Vector.dot_product(normal, point_to_ray) > 0
+        normal = Vector.from_points(self.center, point, normalise=True)
+        point_to_src = Vector.from_points(point, ray.src)
+        return Vector.dot_product(normal, point_to_src) > 0
     
     def ray_intersection(self, ray: Ray) -> Union[Point, None]:
         # Ray source inside sphere
-        if self.is_point_inside(ray.source):
-            return None
+        # Not required as we always check if ray is above surface
+        # if self.is_point_inside(ray.src):
+        #     return None
         
         # Compute intersection
-        ac = Vector.from_points(self.center, ray.source)
-        dot = Vector.dot_product(ray.direction, ac)
-        delta = 4 * dot**2 - 4 * (ac.get_norm()**2 - self.radius**2)
-        if delta < 0: # ray does not intersect sphere
+        cs = Vector.from_points(self.center, ray.src)
+        dot = Vector.dot_product(ray.dir, cs)
+        delta = 4 * dot**2 - 4 * (cs.get_norm()**2 - self.rad**2)
+        if delta < 0: # Ray does not intersect sphere
             return None
-        elif delta == 0: # ray tangent to sphere
+        elif delta == 0: # Ray tangent to sphere
             return ray.follow_ray(-dot)
         else:
             sqrt_delta = np.sqrt(delta)
             r1 = -2 * dot - sqrt_delta
             r2 = -2 * dot + sqrt_delta
-            if r1 < 0 and r2 < 0: # ray does not intersect sphere
+            if r1 < 0 and r2 < 0: # Ray does not intersect sphere
                 return None
             else:
-                # ray intersects sphere and is not inside so both solutions are positive
+                # Ray intersects sphere and is not inside so both solutions are positive
                 return ray.follow_ray(min(r1, r2) / 2)
             
     def diffused_color(self, ray: Ray, normal: Vector) -> Color:
         # Check if both vectors normalised ?
-        theta = Vector.dot_product(ray.direction, normal)
+        theta = Vector.dot_product(ray.dir, normal)
         color = np.cos(theta) * np.multiply(self.color.val, ray.color.val)
         return Color(color)
     
     def reflected_ray(self, ray: Ray, point: Point) -> Ray:
-        reflected_direction = Vector(-ray.direction.val)
-        return Ray(point, reflected_direction, ray.color) # Change color
+        reflected_direction = -ray.dir
+        return Ray(point, reflected_direction, ray.color) # Change col
 
     @classmethod
     def from_points(cls, center: Point, point: Point):
-        radius = Point.distance(center, point)
-        return Sphere(center, radius)
+        rad = Point.distance(center, point)
+        return Sphere(center, rad)

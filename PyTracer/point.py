@@ -1,15 +1,24 @@
 from typing import Union
 import numpy as np
 
-# USe dataclas decorator?
-
 class Point():
 
-    def __init__(self, val: Union[np.ndarray, list]):
-        if isinstance(val, list):
-            val = np.array(val, dtype=np.float16)
-        self.val: np.ndarray = val
+    def __init__(self, coord: Union[np.ndarray, list]):
+        """
+        3D point
+
+        Parameters
+        ----------
+        coord : Union[np.ndarray, list]
+            Coordinates in three dimensional space
+        """
+        if isinstance(coord, list):
+            coord = np.array(coord, dtype=np.float16)
+        self.coord: np.ndarray = coord
+
+    def __str__(self) -> str:
+        return f"Point(coord={self.coord})"
 
     @classmethod
     def distance(cls, point_1, point_2) -> float:
-        return np.linalg.norm(point_2.val - point_1.val)
+        return np.linalg.norm(point_2.coord - point_1.coord)
