@@ -8,7 +8,7 @@ from vector import Vector
 
 class Sphere():
 
-    def __init__(self, center: Point, rad: float, color: Color):
+    def __init__(self, center: Point, rad: float, color: Color, reflection: float):
         """
         Sphere
 
@@ -20,13 +20,17 @@ class Sphere():
             Radius
         color : Color
             Color
+        reflection: float
+            Reflection coefficient
         """
         self.center: Point = center
         self.rad: float = rad
         self.color: Color = color
+        self.reflection: float = reflection
 
     def __str__(self) -> str:
-        return f"Sphere(center={self.center}, rad={self.rad}, color={self.color})"
+        return (f"Sphere(center={self.center}, rad={self.rad}, "
+                f"color={self.color}, reflection={self.reflection})")
 
     def normal_at_point(self, point: Point) -> Vector:
         return Vector.from_points(self.center, point, True)
@@ -71,7 +75,7 @@ class Sphere():
     
     def reflected_ray(self, ray: Ray, point: Point) -> Ray:
         reflected_direction = -ray.dir
-        return Ray(point, reflected_direction, ray.color) # Change col
+        return Ray(point, reflected_direction, ray.color)
 
     @classmethod
     def from_points(cls, center: Point, point: Point):

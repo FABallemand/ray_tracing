@@ -10,7 +10,7 @@ from sphere import Sphere
 
 class Scene():
 
-    def __init__(self, view_size=(16, 9), screen_size=(1600, 900)):
+    def __init__(self, view_size=(16, 9), screen_size=(1600, 900), nb_max_reflections: int = 3):
         """
         Scene
 
@@ -23,6 +23,7 @@ class Scene():
         """
         self.view_size: tuple[int, int] = view_size
         self.screen_size: tuple[int, int] = screen_size
+        self.nb_max_reflections: int = nb_max_reflections
         self.image: np.ndarray = np.empty((*screen_size, 3))
         self.lights: list[Light] = []
         self.spheres: list[Sphere] = []
@@ -54,11 +55,12 @@ class Scene():
                     return False
         return True
     
-    def interception(self, ray: Ray) -> Union[tuple[Point, Sphere], None]:
+    def interception(self, ray: Ray, exception_spheres: list = []) -> tuple[Union[Point, None], Union[Sphere, None]]:
         intersection_point = None
         intersection_distance = None
         intersection_sphere = None
-        for sphere in self.spheres:
+        spheres = [s for s in self.spheres if s not in exception_spheres]
+        for sphere in spheres:
             new_intersection_point = sphere.ray_intersection(ray)
             if new_intersection_point is not None:
                 new_intersection_distance = Point.distance(new_intersection_point, ray.src)
@@ -84,14 +86,65 @@ class Scene():
         # Iterate over all pixels
         for j in range(self.screen_size[0]):                
             for i in range(self.screen_size[1]):
+
+                # Create ray going through pixel (i,j)
                 ray = self.ray_from_pixel(omega, i, j)
 
-                intersection_point, sphere = self.interception(ray)
-                if intersection_point is not None:
-                    pixel_color = self.diffused_color(intersection_point, sphere)
+                # Compute intersection point and sphere, color pixel accordingly
+                intersection_point, intersection_sphere = self.interception(ray)
+                if intersection_point is None:
+                    self.image[i, j] = bg_color.val
+                else:
+                    pixel_color = self.diffused_color(intersection_point, intersection_sphere)
+                    self.image[i, j] = pixel_color.val
+
+    
+    def reflections(self, ray: Ray) -> list[tuple[Point, Sphere]]:
+        intersections = [] # Intersections of the (reflected) ray
+        exception_spheres = []
+        for i in range(self.nb_max_reflections):
+            intersection_point, intersection_sphere = self.interception(ray, exception_spheres)
+            if intersection_point is None:
+                break
+            else:
+                intersections.append((intersection_point, intersection_sphere))
+                ray = intersection_sphere.reflected_ray(ray, intersection_point)
+                exception_spheres = [intersection_sphere]
+        return intersections
+    
+
+    def reflected_color(self, intersections: list[tuple[Point, Sphere]]) -> Color:
+        colors = [BLACK] * len(intersections)
+        diffused_colors = [self.diffused_color(intersection_point, intersection_sphere)
+                           for intersection_point, intersection_sphere in intersections]
+        colors[-1] = diffused_colors[-1]
+        for i in range(self.nb_max_reflections - 2, -1, -1):
+            _, previous_intersection_sphere = intersections[i + 1]
+            colors[i] = diffused_colors[i] + previous_intersection_sphere.reflection * diffused_colors[i + 1]
+        return colors[0]
+
+
+    def ray_trace_with_reflection(self, omega: Point, bg_color: Color, lights: bool = False):
+        # Iterate over all pixels
+        for j in range(self.screen_size[0]):                
+            for i in range(self.screen_size[1]):
+                # print(f"(i, j) = ({i}, {j})")
+
+                # Create ray going through pixel (i,j)
+                ray = self.ray_from_pixel(omega, i, j)
+
+                # Compute intersection point and sphere, color pixel accordingly
+                intersections = self.reflections(ray)
+                if intersections == []:
+                    self.image[i, j] = bg_color.val
+                elif len(intersections) == 1:
+                    intersection_point, intersection_sphere = intersections[0]
+                    pixel_color = self.diffused_color(intersection_point, intersection_sphere)
                     self.image[i, j] = pixel_color.val
                 else:
-                    self.image[i, j] = bg_color.val
+                    pixel_color = self.reflected_color(intersections)
+                    self.image[i, j] = pixel_color.val
+
 
     def plot(self, path=None):
         plt.figure("PyTracer", figsize=self.view_size)
