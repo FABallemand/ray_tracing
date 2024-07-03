@@ -13,7 +13,7 @@ class Point():
             Coordinates in three dimensional space
         """
         if isinstance(coord, list):
-            coord = np.array(coord, dtype=np.float16)
+            coord = np.array(coord, dtype=np.float32)
         self.coord: np.ndarray = coord
 
     def __str__(self) -> str:

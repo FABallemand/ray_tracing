@@ -46,8 +46,9 @@ class Sphere():
     def ray_intersection(self, ray: Ray) -> Union[Point, None]:
         # Ray source inside sphere
         # Not required as we always check if ray is above surface
-        # if self.is_point_inside(ray.src):
-        #     return None
+        # Required when computing reflections??
+        if self.is_point_inside(ray.src):
+            return None
         
         # Compute intersection
         cs = Vector.from_points(self.center, ray.src)

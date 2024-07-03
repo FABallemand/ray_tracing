@@ -79,7 +79,7 @@ class Scene():
 
         color = BLACK
         for c in colors:
-            color.val += c.val
+            color += c
         return color
     
     def ray_trace(self, omega: Point, bg_color: Color, lights: bool = False):

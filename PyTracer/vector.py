@@ -15,7 +15,7 @@ class Vector():
             Value in three dimensional space
         """
         if isinstance(val, list):
-            val = np.array(val, dtype=np.float16)
+            val = np.array(val, dtype=np.float32)
         self.val: np.ndarray = val
 
         self._norm = None
