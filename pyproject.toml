@@ -1,0 +1,33 @@
+[project]
+name = "ray-tracing"
+version = "0.1.0"
+authors = [
+    {name = "Fabien ALLEMAND", email = "allemand.fabien@orange.fr"},
+]
+description = "Different implementations of ray tracing."
+readme = "README.md"
+requires-python = ">=3.12"
+keywords = [
+    "ray-tracing",
+]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "utils" },
+    #   { include-group = "tests" },
+    #   { include-group = "doc" },
+]
+lint = [
+    "bandit>=1.8.5",
+    "isort>=6.0.1",
+    "pre_commit>=4.2.0",
+    "pylint>=3.3.7",
+    "ruff>=0.12.7",
+]
+utils = ["ipykernel>=6.30.1", "matplotlib>=3.10.8"]
+# tests = ["pytest>=8.4.2"]
+# doc = [
+#   "Sphinx>=9.0.4",
+# ]

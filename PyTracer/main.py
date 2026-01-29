@@ -1,131 +1,200 @@
+"""
+Main file.
+"""
+
 import os
+import random
+from datetime import datetime
 
-import numpy as np
+from src.color import Color, DARK_GREY, WHITE, RED, BLUE, GREEN
+from src.light import Light
+from src.point import Point
+from src.scene import Scene, SceneWithReflections
+from src.sphere import Sphere
 
-from color import Color, BLACK, WHITE, RED, GREEN, BLUE
-from light import Light
-from point import Point
-from ray import Ray
-from scene import Scene
-from sphere import Sphere
-from vector import Vector
 
-def scene_1():
+def scene_1(n_max_reflections=0):
+    """
+    Handle test scene 1.
+    """
     # Create scene
-    scene = Scene(view_size=(10, 10), screen_size=(250, 250), nb_max_reflections=3)
+    scene = (
+        SceneWithReflections(
+            (10, 10),
+            (250, 250),
+            n_max_reflections,
+        )
+        if n_max_reflections > 0
+        else Scene((10, 10), (250, 250))
+    )
 
     # Add objects
-    sphere_1 = Sphere(Point([0, 0, -10]), 5, WHITE, 0.3)
-    scene.spheres.append(sphere_1)
+    scene.spheres = [Sphere(Point(0, 0, -10), 10, BLUE, 0.3)]
 
     # Add lights
-    light_1 = Light(Point([10, 0, -10]), BLUE)
-    scene.lights.append(light_1)
-    light_2 = Light(Point([-10, 0, -10]), BLUE)
-    scene.lights.append(light_2)
-    light_3 = Light(Point([0, 10, -5]), RED)
-    scene.lights.append(light_3)
-    light_4 = Light(Point([0, -10, -5]), GREEN)
-    scene.lights.append(light_4)
+    scene.lights = [
+        Light(Point(0, 5, 0), WHITE),
+    ]
 
     # Perform ray-tracing
-    # scene.ray_trace(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
-    scene.ray_trace_with_reflection(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
+    scene.ray_trace(Point(0, 0, 1), DARK_GREY)
 
     # Display
-    scene.plot("scene_1.png")
+    scene.plot(f"results/scene_1_{n_max_reflections}.png")
 
-def scene_2():
+
+def scene_2(n_max_reflections=0):
+    """
+    Handle test scene 2.
+    """
     # Create scene
-    scene = Scene(view_size=(10, 10), screen_size=(250, 250))
+    scene = (
+        SceneWithReflections(
+            (10, 10),
+            (250, 250),
+            n_max_reflections,
+        )
+        if n_max_reflections > 0
+        else Scene((10, 10), (250, 250))
+    )
 
     # Add objects
-    sphere_1 = Sphere(Point([-20, 0, -10]), 3, RED, 0.1)
-    scene.spheres.append(sphere_1)
-    sphere_2 = Sphere(Point([0, 20, -10]), 4, GREEN, 0.2)
-    scene.spheres.append(sphere_2)
-    sphere_3 = Sphere(Point([20, 0, -10]), 5, BLUE, 0.3)
-    scene.spheres.append(sphere_3)
+    scene.spheres = [Sphere(Point(0, 0, -10), 10, Color.from_rgb(8, 188, 254), 0.3)]
 
     # Add lights
-    light_1 = Light(Point([0, 0, -5]), WHITE)
-    scene.lights.append(light_1)
+    scene.lights = [
+        Light(Point(-5, 5, 0), WHITE),
+        Light(Point(5, 5, 0), GREEN),
+    ]
 
     # Perform ray-tracing
-    # scene.ray_trace(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
-    scene.ray_trace_with_reflection(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
+    scene.ray_trace(Point(0, 0, 1), DARK_GREY)
 
     # Display
-    scene.plot("scene_2.png")
+    scene.plot(f"results/scene_2_{n_max_reflections}.png")
 
-def scene_3():
+
+def scene_3(n_max_reflections=0):
+    """
+    Handle test scene 3.
+    """
     # Create scene
-    scene = Scene(view_size=(10, 10), screen_size=(250, 250))
+    scene = (
+        SceneWithReflections(
+            (10, 10),
+            (250, 250),
+            n_max_reflections,
+        )
+        if n_max_reflections > 0
+        else Scene((10, 10), (250, 250))
+    )
 
     # Add objects
-    sphere_1 = Sphere(Point([-20, 0, -10]), 2, RED, 0.5)
-    scene.spheres.append(sphere_1)
-    sphere_2 = Sphere(Point([-40, 0, -10]), 4, RED, 0.5)
-    scene.spheres.append(sphere_2)
-    sphere_3 = Sphere(Point([-5, 20, -10]), 5, GREEN, 0.5)
-    scene.spheres.append(sphere_3)
-    sphere_4 = Sphere(Point([5, 20, -10]), 5, GREEN, 0.5)
-    scene.spheres.append(sphere_4)
-    sphere_5 = Sphere(Point([20, 0, -10]), 4, BLUE, 0.5)
-    scene.spheres.append(sphere_5)
-    sphere_6 = Sphere(Point([40, 0, -10]), 2, BLUE, 0.5)
-    scene.spheres.append(sphere_6)
-    sphere_7 = Sphere(Point([0, -20, -15]), 4, RED + GREEN, 0.5)
-    scene.spheres.append(sphere_7)
-    sphere_8 = Sphere(Point([0, -40, -10]), 5, RED + GREEN, 0.5)
-    scene.spheres.append(sphere_8)
+    scene.spheres = [
+        Sphere(Point(-10, 0, -10), 8, Color.from_rgb(8, 188, 254), 0.3),
+        Sphere(Point(10, 0, -10), 8, Color.from_rgb(8, 8, 255), 0.3),
+    ]
 
     # Add lights
-    light_1 = Light(Point([0, 0, -10]), WHITE)
-    scene.lights.append(light_1)
+    scene.lights = [
+        Light(Point(0, 5, 0), WHITE),
+    ]
 
     # Perform ray-tracing
-    # scene.ray_trace(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
-    scene.ray_trace_with_reflection(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
+    scene.ray_trace(Point(0, 0, 1), DARK_GREY)
 
     # Display
-    scene.plot("scene_3.png")
+    scene.plot(f"results/scene_3_{n_max_reflections}.png")
 
-def random_scene():
+def scene_4(n_max_reflections=0):
+    """
+    Handle test scene 4.
+    """
     # Create scene
-    scene = Scene(view_size=(10, 10), screen_size=(250, 250))
+    scene = (
+        SceneWithReflections(
+            (10, 10),
+            (250, 250),
+            n_max_reflections,
+        )
+        if n_max_reflections > 0
+        else Scene((10, 10), (250, 250))
+    )
 
-    min = np.array([-50, -50, -20])
-    max = np.array([50, 50, -10])
-    range_size = max - min
+    # Add objects
+    scene.spheres = [
+        Sphere(Point(-10, 0, -10), 8, Color.from_rgb(8, 188, 254), 0.3),
+        Sphere(Point(10, 0, -10), 8, Color.from_rgb(8, 8, 255), 0.3),
+    ]
+
+    # Add lights
+    scene.lights = [
+        Light(Point(-5, 5, 0), WHITE),
+        Light(Point(5, 5, 0), GREEN),
+    ]
+
+    # Perform ray-tracing
+    scene.ray_trace(Point(0, 0, 1), DARK_GREY)
+
+    # Display
+    scene.plot(f"results/scene_4_{n_max_reflections}.png")
+
+
+def random_scene(n_max_reflections=0):
+    """
+    Handle random scenes.
+    """
+    # Create scene
+    scene = (
+        SceneWithReflections((10, 10), (250, 250), n_max_reflections)
+        if n_max_reflections > 0
+        else Scene((10, 10), (250, 250))
+    )
+
+    min_xy = -50
+    min_z = -20
+
+    max_xy = 50
+    max_z = -10
+
+    range_size_xy = max_xy - min_xy
+    range_size_z = max_z - min_z
 
     # Add objects
     nb_spheres = 40
     for _ in range(nb_spheres):
-        position = Point(np.random.random(3) * range_size + min)
-        size = np.random.random() * 5 + 1
-        color = Color(np.random.random(3))
-        reflection = np.random.random()
+        position = Point(
+            random.random() * range_size_xy + min_xy,
+            random.random() * range_size_xy + min_xy,
+            random.random() * range_size_z + min_z,
+        )
+        size = random.random() * 5 + 1
+        color = Color(random.random(), random.random(), random.random())
+        reflection = random.random()
         sphere = Sphere(position, size, color, reflection)
         scene.spheres.append(sphere)
 
     # Add lights
     nb_lights = 3
     for _ in range(nb_lights):
-        position = Point(np.random.random(3) * range_size + min)
-        color = Color(np.random.random(3))
+        position = Point(
+            random.random() * range_size_xy + min_xy,
+            random.random() * range_size_xy + min_xy,
+            random.random() * range_size_z + min_z,
+        )
+        color = Color(random.random(), random.random(), random.random())
         light = Light(position, color)
         scene.lights.append(light)
 
     # Perform ray-tracing
     # scene.ray_trace(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
-    scene.ray_trace_with_reflection(Point([0, 0, 1]), Color([0.5, 0.5, 0.5]))
+    scene.ray_trace(Point(0, 0, 1), Color(0.5, 0.5, 0.5))
 
-    # Display
-    from datetime import datetime
-    timestamp = datetime.now()
-    path = f"scene_{timestamp.strftime('%Y%m%d_%H%M%S')}"
-    scene.plot(path)
+    # Plot
+    scene.plot(
+        f"results/scene_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{n_max_reflections}"
+    )
+
 
 if __name__ == "__main__":
     # Change working directory
@@ -134,9 +203,11 @@ if __name__ == "__main__":
     os.chdir(dname)
 
     # Test
-    # scene_1()
-    # scene_2()
-    # scene_3()
-    for _ in range(10):
-        random_scene()
-    
+    for i in range(4):
+        # scene_1(i)
+        # scene_2(i)
+        # scene_3(i)
+        scene_4(i)
+
+    # for _ in range(10):
+    #     random_scene()
