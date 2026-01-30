@@ -16,6 +16,7 @@ dependencies = []
 dev = [
     { include-group = "lint" },
     { include-group = "utils" },
+    { include-group = "numpy_tracer" },
     #   { include-group = "tests" },
     #   { include-group = "doc" },
 ]
@@ -27,6 +28,7 @@ lint = [
     "ruff>=0.12.7",
 ]
 utils = ["ipykernel>=6.30.1", "matplotlib>=3.10.8"]
+numpy_tracer =["numpy>=2.4.1"]
 # tests = ["pytest>=8.4.2"]
 # doc = [
 #   "Sphinx>=9.0.4",

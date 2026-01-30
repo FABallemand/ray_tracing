@@ -16,6 +16,8 @@ class Ray:
         """
         Initialise Ray instance.
 
+        Note: Normalise direction vector `dir`.
+
         Args:
             src (Point): Source.
             dir (Vector): Direction.

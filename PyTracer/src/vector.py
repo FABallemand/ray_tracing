@@ -2,6 +2,8 @@
 This module contains the Vector class.
 """
 
+from __future__ import annotations
+
 from math import sqrt
 
 from .point import Point
@@ -59,14 +61,14 @@ class Vector:
         return self
 
     @classmethod
-    def from_points(cls, start: Point, stop: Point) -> "Vector":
+    def from_points(cls, start: Point, stop: Point) -> Vector:
         """
         Create vector from two points.
         """
         return Vector(stop.x - start.x, stop.y - start.y, stop.z - start.z)
 
     @classmethod
-    def dot_product(cls, a: "Vector", b: "Vector") -> float:
+    def dot_product(cls, a: Vector, b: Vector) -> float:
         """
         Compute the dot product between two vectors.
         """

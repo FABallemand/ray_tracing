@@ -2,6 +2,8 @@
 This module contains the Color class.
 """
 
+from __future__ import annotations
+
 
 class Color:
     """
@@ -25,21 +27,25 @@ class Color:
     def __str__(self):
         return f"Color(r={self.r}, g={self.g}, b={self.b})"
 
-    def __add__(self, other):
+    def __add__(self, other: Color) -> Color:
+        if not isinstance(other, Color):
+            raise TypeError(f"Cannot add a Color to object of type {type(other)}.")
         return Color(self.r + other.r, self.g + other.g, self.b + other.b)
 
-    def __iadd__(self, other):
+    def __iadd__(self, other) -> Color:
+        if not isinstance(other, Color):
+            raise TypeError(f"Cannot add a Color to object of type {type(other)}.")
         return Color(self.r + other.r, self.g + other.g, self.b + other.b)
 
-    def __mul__(self, other):
+    def __mul__(self, other: int | float | Color) -> Color:
         if isinstance(other, (int, float)):
             return Color(self.r * other, self.g * other, self.b * other)
         if isinstance(other, Color):
             return Color(self.r * other.r, self.g * other.g, self.b * other.b)
-        raise ValueError(f"Cannot multiply a Color by object with type : {type(other)}")
+        raise TypeError(f"Cannot multiply a Color by object of type {type(other)}.")
 
     @classmethod
-    def from_rgb(cls, r: int, g: int, b: int) -> "Color":
+    def from_rgb(cls, r: int, g: int, b: int) -> Color:
         """
         Create color instance from RGB values.
 

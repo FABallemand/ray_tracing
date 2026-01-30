@@ -3,6 +3,7 @@ Main file.
 """
 
 import os
+import time
 import random
 from datetime import datetime
 
@@ -12,6 +13,22 @@ from src.point import Point
 from src.scene import Scene, SceneWithReflections
 from src.sphere import Sphere
 
+SCENE_W = 10
+SCENE_H = 10
+
+IMG_W = 2000
+IMG_H = 2000
+
+
+def time_func(f):
+    """
+    Time function call.
+    """
+    start = time.time()
+    f()
+    stop = time.time()
+    print(f"Function {f.__name__!r} executed in {(stop - start):.4f} s")
+
 
 def scene_1(n_max_reflections=0):
     """
@@ -20,12 +37,12 @@ def scene_1(n_max_reflections=0):
     # Create scene
     scene = (
         SceneWithReflections(
-            (10, 10),
-            (250, 250),
+            (SCENE_W, SCENE_H),
+            (IMG_W, IMG_H),
             n_max_reflections,
         )
         if n_max_reflections > 0
-        else Scene((10, 10), (250, 250))
+        else Scene((SCENE_W, SCENE_H), (IMG_W, IMG_H))
     )
 
     # Add objects
@@ -50,12 +67,12 @@ def scene_2(n_max_reflections=0):
     # Create scene
     scene = (
         SceneWithReflections(
-            (10, 10),
-            (250, 250),
+            (SCENE_W, SCENE_H),
+            (IMG_W, IMG_H),
             n_max_reflections,
         )
         if n_max_reflections > 0
-        else Scene((10, 10), (250, 250))
+        else Scene((SCENE_W, SCENE_H), (IMG_W, IMG_H))
     )
 
     # Add objects
@@ -81,12 +98,12 @@ def scene_3(n_max_reflections=0):
     # Create scene
     scene = (
         SceneWithReflections(
-            (10, 10),
-            (250, 250),
+            (SCENE_W, SCENE_H),
+            (IMG_W, IMG_H),
             n_max_reflections,
         )
         if n_max_reflections > 0
-        else Scene((10, 10), (250, 250))
+        else Scene((SCENE_W, SCENE_H), (IMG_W, IMG_H))
     )
 
     # Add objects
@@ -106,6 +123,7 @@ def scene_3(n_max_reflections=0):
     # Display
     scene.plot(f"results/scene_3_{n_max_reflections}.png")
 
+
 def scene_4(n_max_reflections=0):
     """
     Handle test scene 4.
@@ -113,12 +131,12 @@ def scene_4(n_max_reflections=0):
     # Create scene
     scene = (
         SceneWithReflections(
-            (10, 10),
-            (250, 250),
+            (SCENE_W, SCENE_H),
+            (IMG_W, IMG_H),
             n_max_reflections,
         )
         if n_max_reflections > 0
-        else Scene((10, 10), (250, 250))
+        else Scene((SCENE_W, SCENE_H), (IMG_W, IMG_H))
     )
 
     # Add objects
@@ -146,9 +164,9 @@ def random_scene(n_max_reflections=0):
     """
     # Create scene
     scene = (
-        SceneWithReflections((10, 10), (250, 250), n_max_reflections)
+        SceneWithReflections((SCENE_W, SCENE_H), (IMG_W, IMG_H), n_max_reflections)
         if n_max_reflections > 0
-        else Scene((10, 10), (250, 250))
+        else Scene((SCENE_W, SCENE_H), (IMG_W, IMG_H))
     )
 
     min_xy = -50
@@ -203,11 +221,16 @@ if __name__ == "__main__":
     os.chdir(dname)
 
     # Test
-    for i in range(4):
-        # scene_1(i)
-        # scene_2(i)
-        # scene_3(i)
-        scene_4(i)
+    time_func(scene_1)
+    # scene_2(0)
+    # scene_3(0)
+    # scene_4(0)
+
+    # for i in range(4):
+    #     scene_1(i)
+    #     scene_2(i)
+    #     scene_3(i)
+    #     scene_4(i)
 
     # for _ in range(10):
     #     random_scene()

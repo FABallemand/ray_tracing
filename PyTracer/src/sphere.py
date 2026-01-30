@@ -96,13 +96,14 @@ class Sphere:
         if delta < 0:  # Ray does not intersect sphere
             return None
         if delta == 0:  # Ray tangent to sphere
-            return ray.follow_ray(-Vector.dot_product(ray.dir, center_to_src))
+            return ray.follow_ray(-b / 2)
         sqrt_delta = sqrt(delta)
         r1 = -b - sqrt_delta
         r2 = -b + sqrt_delta
         if r1 < 0 and r2 < 0:  # Ray does not intersect sphere
             return None  # TODO why?
         # Ray intersects sphere
+        # Both solutions are positive because the ray source is not inside the sphere
         return ray.follow_ray(min(r1, r2) / 2)
 
     def diffused_color(self, ray: Ray, normal: Vector) -> Color:

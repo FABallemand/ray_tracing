@@ -2,6 +2,8 @@
 This module contains the Point class.
 """
 
+from __future__ import annotations
+
 from math import sqrt
 
 
@@ -26,14 +28,21 @@ class Point:
     def __str__(self) -> str:
         return f"Point(x={self.x}, y={self.y}, z={self.z})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Point) -> bool:
+        if not isinstance(other, Point):
+            raise TypeError(f"Cannot compare a Point to object of type {type(other)}.")
         return self.x == other.x and self.y == other.y and self.z == other.z
 
     @classmethod
-    def distance(cls, point_1: "Point", point_2: "Point") -> float:
+    def distance(cls, point_1: Point, point_2: Point) -> float:
         """
         Compute distance between two points.
         """
+        if not isinstance(point_1, Point) or not isinstance(point_2, Point):
+            raise TypeError(
+                "Cannot compute distance between objects of type "
+                f"{type(point_1)} and {type(point_1)}."
+            )
         if point_1 == point_2:
             return 0.0
         d_x = point_1.x - point_2.x

@@ -48,8 +48,12 @@ class Scene:
             self.screen_size[0] / 2,
             self.screen_size[1] / 2,
         )  # Assuming screen size is even
-        self._delta_x = self.view_size[0] / self.screen_size[0]
-        self._delta_y = self.view_size[1] / self.screen_size[1]
+        self._delta_x = (
+            self.view_size[0] / self.screen_size[0]
+        )  # Horizontal space covered by a pixel
+        self._delta_y = (
+            self.view_size[1] / self.screen_size[1]
+        )  # Vertical space covered by a pixel
 
     def set_pixel_color(self, i: int, j: int, color: Color):
         """
@@ -94,7 +98,7 @@ class Scene:
             Ray: Ray from pixel.
         """
         screen_point = self.pixel_to_point(i, j)
-        return Ray(screen_point, Vector.from_points(omega, screen_point), BLACK)
+        return Ray(omega, Vector.from_points(omega, screen_point), BLACK)
 
     def is_ray_visible_from_point(self, ray: Ray, sphere: Sphere, point: Point) -> bool:
         """
